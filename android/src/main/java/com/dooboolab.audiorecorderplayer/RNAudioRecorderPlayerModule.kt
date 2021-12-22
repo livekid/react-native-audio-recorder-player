@@ -103,9 +103,10 @@ class RNAudioRecorderPlayerModule(private val reactContext: ReactApplicationCont
 
     @ReactMethod
     fun stopRecorder(promise: Promise) {
-        if (recordHandler != null) {
-            recordHandler!!.removeCallbacks(recorderRunnable)
+        if (recordHandler != null && recorderRunnable != null) {
+            recordHandler!!.removeCallbacks(recorderRunnable!!)
         }
+
         if (mediaRecorder == null) {
             promise.reject("stopRecord", "recorder is null.")
             return
@@ -113,7 +114,7 @@ class RNAudioRecorderPlayerModule(private val reactContext: ReactApplicationCont
         try {
             mediaRecorder!!.stop()
         } catch (stopException: RuntimeException) {
-            Log.d(tag, stopException.message)
+            Log.d(tag, stopException.message ?: "stopRecorder - did catch error")
             promise.reject("stopRecord", stopException.message)
         }
         mediaRecorder!!.release()
